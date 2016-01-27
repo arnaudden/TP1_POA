@@ -28,7 +28,7 @@ public class ApplicationClient {
 		
 	}
 	
-	public void traiteCommande(Commande uneCommande) throws IOException 
+	public void traiteCommande(Commandes uneCommande) throws IOException 
 	{
 		outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
 		
