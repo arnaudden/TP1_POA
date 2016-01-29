@@ -1,5 +1,6 @@
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -17,8 +18,10 @@ public class Commande implements Serializable {
 	
 	// fonction possible {Compilation, Chargement, Creation, Lecture, Fonction}
 	String fct;
+	//Fonction
+	String cheminRelatifDesFichiers;
 	//Compilation
-	List<String> path;
+	ArrayList<String> path;
 	// Chargement
 	String nomQualifieDeClasse;
 	// Creation 
@@ -36,9 +39,29 @@ public class Commande implements Serializable {
 		//System.out.println(fonction);
 		fct = fonction;
 		String tmp = new String();
+		String tmp1 = new String();
 		switch (fonction){
 		
-		case "compilation": break;
+		case "compilation": tmp = line.substring(indice +1);
+		indice = tmp.indexOf("#");
+		cheminRelatifDesFichiers = tmp.substring(indice+1);
+		tmp = tmp.substring(0,indice);
+		path = new ArrayList<String>();
+		int i =0;
+		while(true){
+			indice = tmp.indexOf(",");
+			if(indice <0){
+				tmp1 = tmp.substring(0);
+				path.add(tmp1);
+				break;
+			}
+			tmp1 = tmp.substring(0, indice);
+			path.add(tmp1);
+			tmp = tmp.substring(indice+1);
+			i++;
+		}
+		
+			break;
 		
 		case "chargement": nomQualifieDeClasse = line.substring(indice + 1); 
 			break;
@@ -49,13 +72,20 @@ public class Commande implements Serializable {
 		identificateur = tmp.substring(indice +1);
 			break;
 		
-		case "lecture": tmp = new String(line.substring(indice + 1));
+		case "lecture": tmp = line.substring(indice + 1);
 		indice = tmp.indexOf("#");
 		identificateur = tmp.substring(0, indice);
 		nomAttribut = tmp.substring(indice +1);
 			break;
 			
-		case "ecriture": break;	
+		case "ecriture": tmp = line.substring(indice + 1);
+		indice = tmp.indexOf("#");
+		identificateur = tmp.substring(0, indice);
+		tmp = tmp.substring(indice +1);
+		indice = tmp.indexOf("#");
+		nomAttribut = tmp.substring(0, indice);
+		valeur = tmp.substring(indice+1);
+		break;	
 		
 		case "fonction": break;
 		default: System.out.println("Fonction Inconnue");
@@ -65,10 +95,16 @@ public class Commande implements Serializable {
 	public String toString(){
 		
 		String result = new String();
-		result = "Fonctison: "+fct;
+		result = "Fonction: "+fct;
 		switch (fct){
 				
-				case "compilation": break;
+				case "compilation":result += ", chemin relatif :";
+				for (Iterator<String> i =path.iterator(); i.hasNext();){
+					String chemin = i.next();
+					result += chemin+", ";
+				}
+				result += " Chemin relatif des fichiers : " + cheminRelatifDesFichiers;
+						break;
 				
 				case "chargement":  result += ", nom qualifie de classe: "+ nomQualifieDeClasse;
 					break;
@@ -79,7 +115,8 @@ public class Commande implements Serializable {
 				case "lecture": result += ", identificateur: "+ identificateur+", nom d'attribut: "+nomAttribut;
 					break;
 					
-				case "ecriture": break;	
+				case "ecriture": result += ", identificateur : "+ identificateur +", nom d'attribut: "+nomAttribut+", valeur: "+valeur;
+					break;	
 				
 				case "fonction": break;
 				default: System.out.println("Fonction Inconnue");
@@ -89,7 +126,7 @@ public class Commande implements Serializable {
 
 	public static void main(String argv[]) throws Exception 
     { 
-		String txt = "ecriture#8inf853#titre#Architecture des applications";
+		String txt = "compilation#./src/ca/uqac/registraire/Cours.java,./src/ca/uqac/registraire/Etudiant.java#./classes";
 		Commande cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
     }
