@@ -47,7 +47,6 @@ public class Commande implements Serializable {
 		cheminRelatifDesFichiers = tmp.substring(indice+1);
 		tmp = tmp.substring(0,indice);
 		path = new ArrayList<String>();
-		int i =0;
 		while(true){
 			indice = tmp.indexOf(",");
 			if(indice <0){
@@ -58,7 +57,6 @@ public class Commande implements Serializable {
 			tmp1 = tmp.substring(0, indice);
 			path.add(tmp1);
 			tmp = tmp.substring(indice+1);
-			i++;
 		}
 		
 			break;
