@@ -16,6 +16,8 @@ public class ApplicationServer {
 	
 	private Socket connectionSocket;
 	
+	private Commande commandeFromClient;
+	
 	private String clientSentence;
 	
 	private String serverSentence;
@@ -30,6 +32,36 @@ public class ApplicationServer {
 	    
 	}
 	
+	/**
+	 * Traite une commande reçu par le serveur en appelant la méthode spécifiée
+	 * @param uneCommande : commande reçu par le serveur
+	 */
+	
+	public void TraiteCommande(Commande uneCommande)
+	{
+		
+	}
+	
+	/**
+	 * Lecture d'un attribut d'une classe
+	 * @param objet : objet correspondant à une classe
+	 * @param attribut : attribut de la classe
+	 */
+	
+	public void TraiteLecture(Object objet, String attribut)
+	{
+		
+		
+		
+	}
+	
+	
+	
+	public void TraiteCompilation(String cheminFichierSource)
+	
+	{
+		
+	}
 	
 	public void aVosOrdres() throws IOException 
 	{
@@ -42,6 +74,10 @@ public class ApplicationServer {
 		    outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			
 			clientSentence = bufferFromClient.readLine(); 
+			
+			commandeFromClient = new Commande();
+			
+			TraiteCommande(commandeFromClient);
 		      
 	    	System.out.println("Mesasge from Client : " + clientSentence);
 	    	
@@ -53,13 +89,13 @@ public class ApplicationServer {
 		
 	}
 	
+	
+	
+	
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);
 		server.aVosOrdres();
-		
-		
-		
     }
 	
 	    	 
