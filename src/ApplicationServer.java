@@ -75,11 +75,11 @@ public class ApplicationServer {
 			
 			clientSentence = bufferFromClient.readLine(); 
 			
-			commandeFromClient = new Commande();
+			commandeFromClient = new Commande(clientSentence);
+			
+			System.out.println("Mesasge from Client : " + clientSentence);
 			
 			TraiteCommande(commandeFromClient);
-		      
-	    	System.out.println("Mesasge from Client : " + clientSentence);
 	    	
 	    	serverSentence = clientSentence.toUpperCase() + '\n'; 
 	    	
