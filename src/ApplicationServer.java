@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 
 public class ApplicationServer {
@@ -39,6 +44,47 @@ public class ApplicationServer {
 	
 	public void TraiteCommande(Commande uneCommande)
 	{
+		switch(uneCommande.getFonction())
+		
+		{
+		
+		case "compilation": 
+			
+			ArrayList<String> path = uneCommande.getPath();
+			
+			for (Iterator<String> i =path.iterator(); i.hasNext();)
+			{
+				
+				String chemin = i.next();
+				int compil = TraiteCompilation(chemin);
+				if(compil ==0)
+				{
+					System.out.println(chemin + " a ete compile");
+				}
+				
+			}
+			break;
+			
+		case "chargement":
+			
+			
+			break;
+		case "creation":
+			
+			break;
+			
+		case "lecture" :
+			
+			break;
+			
+		case "ecriture":
+			
+			break;
+			
+		default: System.out.println("Fonction Inconnue");
+			
+		
+		}
 		
 	}
 	
@@ -57,11 +103,19 @@ public class ApplicationServer {
 	
 	
 	
-	public void TraiteCompilation(String cheminFichierSource)
+	public int TraiteCompilation(String cheminFichierSource)
 	
 	{
+		System.setProperty("java.home", "C:\\Program Files (x86)\\Java\\jdk1.7.0_80");
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		
+		int result = compiler.run(null, null, null, cheminFichierSource);
+		System.out.println(result);
+		return result;
 	}
+	
+	
+	
 	
 	public void aVosOrdres() throws IOException 
 	{
@@ -95,7 +149,11 @@ public class ApplicationServer {
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);
-		server.aVosOrdres();
+		//server.aVosOrdres();
+		
+		
+		Commande newCommande  = new Commande("compilation#./src/ca/uqac/registraire/Cours.java,./src/ca/uqac/registraire/Etudiant.java#./classes");
+		server.TraiteCommande(newCommande);
     }
 	
 	    	 
