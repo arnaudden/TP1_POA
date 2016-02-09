@@ -27,13 +27,21 @@ public class ApplicationServer {
 	
 	private String serverSentence;
 	
+	private ArrayList<Class> listClass;
+	
+	private ArrayList<Object> listCours;
+	
+	private ArrayList<Object> listStudent;
+	
 	
 	public ApplicationServer(int port) throws Exception
 	{
 		
 		welcomeSocket = new ServerSocket(port); 
 	    System.out.println("SERVER Is Ready!" );
-	    
+	    listClass = new ArrayList<Class>();
+	    listCours = new ArrayList<Object>();
+	    listStudent = new ArrayList<Object>();
 	    
 	}
 	
@@ -61,11 +69,15 @@ public class ApplicationServer {
 				{
 					System.out.println(chemin + " a ete compile");
 				}
+				else
+					System.err.println("Erreur de compilation de la classe " + chemin);
 				
 			}
 			break;
 			
 		case "chargement":
+			String classe = uneCommande.getNomQualifieDeClasse();
+			traiterChargement(classe);
 			
 			
 			break;
@@ -102,6 +114,11 @@ public class ApplicationServer {
 	}
 	
 	
+	/**
+	 * Fonction qui compile une classe java
+	 * @param cheminFichierSource : chemin du fichier à compiler
+	 * @return un int qui permet de savoir si la compilation s'est bien déroulé
+	 */
 	
 	public int TraiteCompilation(String cheminFichierSource)
 	
@@ -114,6 +131,35 @@ public class ApplicationServer {
 		return result;
 	}
 	
+	/**
+	 * Charge une classe qui aura été préalablement compilée
+	 * @param nomClasse : correspond au nom de la classe à charger
+	 */
+	
+	public void traiterChargement(String nomClasse) 
+	{
+		
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		Class newClass;
+		try {
+	         newClass= classLoader.loadClass(nomClasse);
+	        System.out.println("newClass.getName() = " + newClass.getName());
+	        listClass.add(newClass);
+
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
+		
+		Iterator<Class> itr = listClass.iterator();
+        
+        while (itr.hasNext()) 
+        {
+            Class element = itr.next();
+            System.out.print(element + " ");
+            
+        }
+		
+	}
 	
 	
 	
@@ -152,8 +198,11 @@ public class ApplicationServer {
 		//server.aVosOrdres();
 		
 		
-		Commande newCommande  = new Commande("compilation#./src/ca/uqac/registraire/Cours.java,./src/ca/uqac/registraire/Etudiant.java#./classes");
+		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
 		server.TraiteCommande(newCommande);
+		
+		
+        
     }
 	
 	    	 

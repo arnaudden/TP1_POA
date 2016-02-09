@@ -82,6 +82,7 @@ public class Commande implements Serializable {
 			break;
 		
 		case "chargement": nomQualifieDeClasse = line.substring(indice + 1); 
+		
 			break;
 		
 		case "creation": tmp = line.substring(indice + 1);
@@ -116,6 +117,8 @@ public class Commande implements Serializable {
 		}
 	}
 	
+
+
 	public String toString(){
 		
 		String result = new String();
@@ -156,30 +159,48 @@ public class Commande implements Serializable {
 		Commande cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
 		
-		/*
-		Files.walk(Paths.get("./classes")).forEach(filePath -> {
+		
+		Files.walk(Paths.get("./bin")).forEach(filePath -> {
 		    if (Files.isRegularFile(filePath)) 
 		    {
 		        System.out.println(filePath);
 		    }
 		    
 		});
-		*/
+		
     }
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getFonction() {
 		return fonction;
 	}
 
+	/**
+	 * 
+	 * @param fct
+	 */
 	public void setFonction(String fct) {
 		this.fonction = fct;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<String> getPath() {
 		return path;
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNomQualifieDeClasse() {
+		return nomQualifieDeClasse;
+	}
 
 }
