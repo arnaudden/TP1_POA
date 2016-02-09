@@ -33,6 +33,10 @@ public class Commande implements Serializable {
 	// ecriture
 	String valeur;
 	
+	public Commande(){
+		fct = "aucune fonction";
+	}
+	
 	public Commande(String line){
 		int indice = line.indexOf("#");
 		String fonction = line.substring(0, indice);

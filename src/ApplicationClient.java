@@ -1,10 +1,14 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.Buffer;
@@ -22,7 +26,7 @@ public class ApplicationClient {
 	
 	private String retourFromServer;
 	
-	private BufferedReader read;
+	BufferedReader read;
 	
 	private FileWriter write;
 	
@@ -58,7 +62,11 @@ public class ApplicationClient {
 	*/
 	public Commande saisisCommande(BufferedReader fichier) throws IOException{
 		String cmdLine = new String();
-			cmdLine = fichier.readLine();
+		cmdLine=fichier.readLine();
+		if(cmdLine!=null){
+			Commande cmd = new Commande(cmdLine);
+			return cmd;
+		}
 
 		Commande cmd = new Commande(cmdLine);
 		return cmd;
@@ -69,15 +77,38 @@ public class ApplicationClient {
 	 * @throws IOException 
 	*/
 	
-	public void initialise(String fichCommandes, String fichSortie) throws IOException{
-		BufferedReader read = new BufferedReader( new FileReader(fichCommandes));
-		FileWriter write = new FileWriter (fichSortie);
+	public void initialise(String fichCommandes, String fichSortie) throws IOException{		
+		InputStream ips=new FileInputStream(fichCommandes); 
+		InputStreamReader ipsr=new InputStreamReader(ips);
+		BufferedReader read =new BufferedReader(ipsr);
+		
+		/*
+		String ligne;
+		String chaine ="";
+		while ((ligne=read.readLine())!=null){
+			System.out.println(ligne);
+			chaine+=ligne+"\n";
+		}
+		read.close();
+		System.out.println(chaine);
+		*/
+		
+		FileWriter fw = new FileWriter (fichSortie);		
+		BufferedWriter write = new BufferedWriter (fw);
+		/*
+		PrintWriter fichierSortie = new PrintWriter (write); 
+		fichierSortie.println ("heyy"+"\n test de lecture et écriture !!"); 
+		fichierSortie.close();
+		*/
 	}
 	public static void main(String argv[]) throws Exception { 
 		
           ApplicationClient client = new ApplicationClient("localhost", 6789);
-         // client.traiteCommande(null);
+          client.traiteCommande(null);
           client.initialise("commandes.txt", "resultats.txt");
+          Commande cmd = new Commande();
+          cmd = client.saisisCommande(client.read);
+          cmd.toString();
    
       } 
 
