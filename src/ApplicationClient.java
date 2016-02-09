@@ -77,6 +77,7 @@ public class ApplicationClient {
 	 * @throws IOException 
 	*/
 	
+
 	public void initialise(String fichCommandes, String fichSortie) throws IOException{		
 		InputStream ips=new FileInputStream(fichCommandes); 
 		InputStreamReader ipsr=new InputStreamReader(ips);
@@ -101,6 +102,8 @@ public class ApplicationClient {
 		fichierSortie.close();
 		*/
 	}
+	
+	
 	public static void main(String argv[]) throws Exception { 
 		
           ApplicationClient client = new ApplicationClient("localhost", 6789);
