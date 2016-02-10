@@ -125,37 +125,39 @@ public class Commande implements Serializable {
 			tmp = tmp.substring(indice+1);
 			// Trouver si il y a "ID"
 			indice = tmp.indexOf("ID");
+			int indice2;
 			//Cas ou on trouve "ID" dans la fonction
 			if(indice > 0){
 				indice = tmp.indexOf(":");
 				type = tmp.substring(0, indice);
 				tmp = tmp.substring(indice + 4);
-				id_identificateur = tmp.substring(0, tmp.length() - 1);
+				indice2 = tmp.indexOf(")");
+				id_identificateur = tmp.substring(0, indice2);
 			}
 			// Autre Cas
-			else{
 				Couple cpl = new Couple();
 				liste_parametres = new ArrayList<Couple>();
-				int indice2;
 				
 				while(true){
 					indice = tmp.indexOf(",");
 					if(indice <0){
 						indice2 = tmp.indexOf(":");
-						cpl.type = tmp.substring(0, indice2);
-						cpl.valeur = tmp.substring(indice2);
-						liste_parametres.add(cpl);
+						if(indice2 > 0){
+							cpl.type = tmp.substring(0, indice2);
+							cpl.valeur = tmp.substring(indice2);
+							liste_parametres.add(cpl);
+						}
 						break;
 					}
 					tmp1 = tmp.substring(0, indice);
 					indice2 = tmp1.indexOf(":");
+					if(indice2>0){
 					cpl.type = tmp1.substring(0, indice2);
 					System.out.println(cpl.type);
 					cpl.valeur = tmp1.substring(indice2);
 					liste_parametres.add(cpl);
+					}
 					tmp = tmp.substring(indice+1);
-				}
-				
 			}
 			break;
 		default: System.out.println("Fonction Inconnue");
@@ -191,16 +193,17 @@ public class Commande implements Serializable {
 				case "ecriture": result += ", identificateur : "+ identificateur +", nom d'attribut: "+nomAttribut+", valeur: "+valeur;
 					break;	
 				
-				case "fonction": result += ", identificateur: "+ identificateur +", nom_fonction: "+nom_fonction +"; parametres: ";
+				case "fonction": result += ", identificateur: "+ identificateur +", nom_fonction: "+nom_fonction;
 					if(type != null){
 						result += ",type: "+type+", ID: "+id_identificateur;
-					} else {
-						for (Iterator<Couple> i =liste_parametres.iterator(); i.hasNext();)
-						{
-							Couple cpl = i.next();
-							result += "type: "+cpl.type +", valeur: " + cpl.valeur;
-						}
 					}
+					result += ",parametres : ";
+					for (Iterator<Couple> i =liste_parametres.iterator(); i.hasNext();)
+					{
+						Couple cpl = i.next();
+						result += "type: "+cpl.type +", valeur: " + cpl.valeur;
+					}
+					
 					break;
 				default: System.out.println("Fonction Inconnue");
 				}
@@ -209,10 +212,10 @@ public class Commande implements Serializable {
 
 	public static void main(String argv[]) throws Exception 
     { 
-		String txt = "fonction#c1234#setNomProfesseur#java.lang.String:Labonté";
+		String txt = "fonction#mathilde#getMoyenne#";
 		Commande cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
-		txt = "fonction#c1234#ajouteEtudiant#ca.uqac.8inf853.Etudiant:ID(marc)";
+		txt = "fonction#8inf853#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:3.0";
 		cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
 		
