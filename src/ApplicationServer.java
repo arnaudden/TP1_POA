@@ -5,10 +5,15 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+
+import com.sun.org.apache.bcel.internal.util.ClassSet;
 
 
 public class ApplicationServer {
@@ -27,11 +32,9 @@ public class ApplicationServer {
 	
 	private String serverSentence;
 	
-	private ArrayList<Class> listClass;
+	private HashMap<String, Class> tabClass;
 	
-	private ArrayList<Object> listCours;
-	
-	private ArrayList<Object> listStudent;
+	private HashMap<String, Object> tabObject;
 	
 	
 	public ApplicationServer(int port) throws Exception
@@ -39,9 +42,8 @@ public class ApplicationServer {
 		
 		welcomeSocket = new ServerSocket(port); 
 	    System.out.println("SERVER Is Ready!" );
-	    listClass = new ArrayList<Class>();
-	    listCours = new ArrayList<Object>();
-	    listStudent = new ArrayList<Object>();
+	    tabClass = new HashMap<String, Class>();
+	    tabObject = new HashMap<String, Object>();
 	    
 	}
 	
@@ -83,6 +85,15 @@ public class ApplicationServer {
 			break;
 		case "creation":
 			
+			for(HashMap.Entry<String,Class> entry: tabClass.entrySet())
+			{
+				if(entry.getKey().equals(uneCommande.getNomDeClasse()))
+				{
+					traiterCreation(entry.getValue(), uneCommande.getIdentificateur());
+				}
+				
+			}
+			
 			break;
 			
 		case "lecture" :
@@ -90,6 +101,14 @@ public class ApplicationServer {
 			break;
 			
 		case "ecriture":
+			
+			for(HashMap.Entry<String,Object> entry: tabObject.entrySet())
+			{
+				if(entry.getKey().equals(uneCommande.getIdentificateur()))
+				{
+					traiterEcriture(entry, uneCommande.getNomAttribut(), uneCommande.getValeur());
+				}
+			}
 			
 			break;
 			
@@ -144,20 +163,88 @@ public class ApplicationServer {
 		try {
 	         newClass= classLoader.loadClass(nomClasse);
 	        System.out.println("newClass.getName() = " + newClass.getName());
-	        listClass.add(newClass);
+	        tabClass.put(nomClasse, newClass);
 
 	    } catch (ClassNotFoundException e) {
 	        e.printStackTrace();
 	    }
 		
-		Iterator<Class> itr = listClass.iterator();
-        
-        while (itr.hasNext()) 
-        {
-            Class element = itr.next();
-            System.out.print(element + " ");
-            
-        }
+		for(HashMap.Entry<String,Class> entry: tabClass.entrySet())
+		{
+			System.out.println("nom de la clé : " + entry.getKey() + " nom de la classe à partir de la valeur : " + entry.getValue().getName());
+		}
+		
+	}
+	
+	/**
+	 * Classe qui gère la création d'un objet
+	 * @param classeDeLobjet
+	 * @param identificateur
+	 */
+	
+	public void traiterCreation(Class classeDeLobjet, String identificateur) 
+	{
+		switch(classeDeLobjet.getName())
+		
+		{
+		case "ca.uqac.registraire.Cours": 
+			try 
+			{
+				Object cours = classeDeLobjet.newInstance();
+				tabObject.put(identificateur, cours);
+				
+			} 
+			catch (InstantiationException e) 
+			{
+				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			} 
+			catch (IllegalAccessException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			break;
+		case "ca.uqac.registraire.Etudiant" : 
+			
+			try 
+			{
+				Object student = classeDeLobjet.newInstance();
+				tabObject.put(identificateur, student);
+			} 
+			
+			catch (InstantiationException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			catch (IllegalAccessException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			break;
+			
+		default: System.out.println("Classe non chargée");
+		}
+	}
+	
+	
+	/**
+	 * Permet d'écrire une valeur dans un champ donnée dans une classe donnée
+	 * @param pointeurObjet : objet que nous devons écrire
+	 * @param attribut : attribut à modifier de l'objet
+	 * @param valeur : valeur à écrire dans l'attribut
+	 */
+	public void traiterEcriture(Object pointeurObjet, String attribut, Object valeur) 
+	{
+		
+		
 		
 	}
 	
@@ -199,10 +286,15 @@ public class ApplicationServer {
 		
 		
 		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
+		Commande newCommande2  = new Commande("chargement#ca.uqac.registraire.Etudiant");
+		Commande newCommande3  = new Commande("creation#ca.uqac.registraire.Cours#8inf853");
+		Commande newCommande4  = new Commande("creation#ca.uqac.registraire.Cours#8inf843");
+		Commande newCommande5  = new Commande("creation#ca.uqac.registraire.Etudiant#mathilde");
 		server.TraiteCommande(newCommande);
-		
-		
-        
+		server.TraiteCommande(newCommande2);
+		server.TraiteCommande(newCommande3);
+		server.TraiteCommande(newCommande4);
+		server.TraiteCommande(newCommande5);
     }
 	
 	    	 

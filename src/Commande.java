@@ -40,6 +40,8 @@ public class Commande implements Serializable {
 	//Lecture & ecriture 
 	private String nomAttribut;
 	
+	
+
 	// ecriture
 	private String valeur;
 	
@@ -172,7 +174,7 @@ public class Commande implements Serializable {
 	
 	
 	/**
-	 * 
+	 * Retourne la fonction de la commande à exécuter sur le serveur
 	 * @return
 	 */
 	public String getFonction() {
@@ -188,7 +190,7 @@ public class Commande implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Retourne une ArrayList de chemin de fichier à compiler
 	 * @return
 	 */
 	public ArrayList<String> getPath() {
@@ -196,11 +198,47 @@ public class Commande implements Serializable {
 	}
 	
 	/**
-	 * 
+	 * Retourne le nom de la classe à charger
 	 * @return
 	 */
 	public String getNomQualifieDeClasse() {
 		return nomQualifieDeClasse;
+	}
+	
+	/**
+	 * Retourne de le nom de la classe à créer
+	 * @return
+	 */
+
+	public String getNomDeClasse() {
+		return nomDeClasse;
+	}
+	
+	/**
+	 * Retourne l'identificateur de la classe à créer
+	 * @return
+	 */
+
+	public String getIdentificateur() {
+		return identificateur;
+	}
+
+	/**
+	 * Retourne le nom de l'attribut à remplir/modifier
+	 * @return
+	 */
+	
+	public String getNomAttribut() {
+		return nomAttribut;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public String getValeur() {
+		return valeur;
 	}
 
 }
