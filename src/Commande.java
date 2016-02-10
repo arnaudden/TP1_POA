@@ -1,6 +1,4 @@
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -34,16 +32,26 @@ public class Commande implements Serializable {
 	// Creation 
 	private String nomDeClasse;
 	
-	// Creation & lecture & ecriture
+	// Creation & lecture & ecriture & fonction
 	private String identificateur;
 	
 	//Lecture & ecriture 
-	private String nomAttribut;
-	
-	
+	private String nomAttribut;	
 
 	// ecriture
 	private String valeur;
+	
+	// Fonction
+	private String nom_fonction;
+	
+	// Fonction
+	private ArrayList<Couple> liste_parametres;
+	
+	//Fonction
+	private String type;
+	
+	//Fonction
+	private String id_identificateur;
 	
 	public Commande(){
 		fonction = "aucune fonction";
@@ -62,59 +70,94 @@ public class Commande implements Serializable {
 		switch (fonction){
 		
 		case "compilation": tmp = line.substring(indice +1);
-		indice = tmp.indexOf("#");
-		
-		cheminRelatifDesFichiers = tmp.substring(indice+1);
-		tmp = tmp.substring(0,indice);
-		
-		path = new ArrayList<String>();
-		
-		while(true){
-			indice = tmp.indexOf(",");
-			if(indice <0){
-				tmp1 = tmp.substring(0);
+			indice = tmp.indexOf("#");
+			
+			cheminRelatifDesFichiers = tmp.substring(indice+1);
+			tmp = tmp.substring(0,indice);
+			
+			path = new ArrayList<String>();
+			
+			while(true){
+				indice = tmp.indexOf(",");
+				if(indice <0){
+					tmp1 = tmp.substring(0);
+					path.add(tmp1);
+					break;
+				}
+				tmp1 = tmp.substring(0, indice);
 				path.add(tmp1);
-				break;
+				tmp = tmp.substring(indice+1);
 			}
-			tmp1 = tmp.substring(0, indice);
-			path.add(tmp1);
-			tmp = tmp.substring(indice+1);
-		}
-		
+			
 			break;
 		
-		case "chargement": nomQualifieDeClasse = line.substring(indice + 1); 
-		
+		case "chargement": nomQualifieDeClasse = line.substring(indice+1); 
 			break;
 		
 		case "creation": tmp = line.substring(indice + 1);
-		indice = tmp.indexOf("#");
-		nomDeClasse = tmp.substring(0, indice);
-		identificateur = tmp.substring(indice +1);
+			indice = tmp.indexOf("#");
+			nomDeClasse = tmp.substring(0, indice);
+			identificateur = tmp.substring(indice +1);
 			break;
 		
 		case "lecture": tmp = line.substring(indice + 1);
-		indice = tmp.indexOf("#");
-		identificateur = tmp.substring(0, indice);
-		nomAttribut = tmp.substring(indice +1);
-		
+			indice = tmp.indexOf("#");
+			identificateur = tmp.substring(0, indice);
+			nomAttribut = tmp.substring(indice +1);
 			break;
 			
 		case "ecriture": tmp = line.substring(indice + 1);
+			indice = tmp.indexOf("#");		
+			identificateur = tmp.substring(0, indice);		
+			tmp = tmp.substring(indice +1);		
+			indice = tmp.indexOf("#");		
+			nomAttribut = tmp.substring(0, indice);
+			valeur = tmp.substring(indice+1);
+			break;	
 		
-		indice = tmp.indexOf("#");
-		
-		identificateur = tmp.substring(0, indice);
-		
-		tmp = tmp.substring(indice +1);
-		
-		indice = tmp.indexOf("#");
-		
-		nomAttribut = tmp.substring(0, indice);
-		valeur = tmp.substring(indice+1);
-		break;	
-		
-		case "fonction": break;
+		case "fonction":
+			tmp = line.substring(indice + 1);
+			indice = tmp.indexOf("#");
+			identificateur = tmp.substring(0, indice);
+			tmp = tmp.substring(indice +1);		
+			indice = tmp.indexOf("#");	
+			nom_fonction = tmp.substring(0, indice);
+			tmp = tmp.substring(indice+1);
+			// Trouver si il y a "ID"
+			indice = tmp.indexOf("ID");
+			//Cas ou on trouve "ID" dans la fonction
+			if(indice > 0){
+				indice = tmp.indexOf(":");
+				type = tmp.substring(0, indice);
+				tmp = tmp.substring(indice + 4);
+				id_identificateur = tmp.substring(0, tmp.length() - 1);
+			}
+			// Autre Cas
+			else{
+				Couple cpl = new Couple();
+				liste_parametres = new ArrayList<Couple>();
+				int indice2;
+				
+				while(true){
+					indice = tmp.indexOf(",");
+					if(indice <0){
+						indice2 = tmp.indexOf(":");
+						cpl.type = tmp.substring(0, indice2);
+						cpl.valeur = tmp.substring(indice2);
+						liste_parametres.add(cpl);
+						break;
+					}
+					tmp1 = tmp.substring(0, indice);
+					indice2 = tmp1.indexOf(":");
+					cpl.type = tmp1.substring(0, indice2);
+					System.out.println(cpl.type);
+					cpl.valeur = tmp1.substring(indice2);
+					liste_parametres.add(cpl);
+					tmp = tmp.substring(indice+1);
+				}
+				
+			}
+			break;
 		default: System.out.println("Fonction Inconnue");
 		}
 	}
@@ -127,15 +170,14 @@ public class Commande implements Serializable {
 		result = "Fonction: "+fonction;
 		switch (fonction){
 				
-				case "compilation":result += ", chemin relatif :";
-				
-				for (Iterator<String> i =path.iterator(); i.hasNext();)
-				{
-					String chemin = i.next();
-					result += chemin+", ";
-				}
-				result += " Chemin relatif des fichiers : " + cheminRelatifDesFichiers;
-						break;
+				case "compilation":result += ", chemin relatif :";					
+					for (Iterator<String> i =path.iterator(); i.hasNext();)
+					{
+						String chemin = i.next();
+						result += chemin+", ";
+					}
+					result += " Chemin relatif des fichiers : " + cheminRelatifDesFichiers;
+					break;
 				
 				case "chargement":  result += ", nom qualifie de classe: "+ nomQualifieDeClasse;
 					break;
@@ -149,7 +191,17 @@ public class Commande implements Serializable {
 				case "ecriture": result += ", identificateur : "+ identificateur +", nom d'attribut: "+nomAttribut+", valeur: "+valeur;
 					break;	
 				
-				case "fonction": break;
+				case "fonction": result += ", identificateur: "+ identificateur +", nom_fonction: "+nom_fonction +"; parametres: ";
+					if(type != null){
+						result += ",type: "+type+", ID: "+id_identificateur;
+					} else {
+						for (Iterator<Couple> i =liste_parametres.iterator(); i.hasNext();)
+						{
+							Couple cpl = i.next();
+							result += "type: "+cpl.type +", valeur: " + cpl.valeur;
+						}
+					}
+					break;
 				default: System.out.println("Fonction Inconnue");
 				}
 		return result;
@@ -157,18 +209,14 @@ public class Commande implements Serializable {
 
 	public static void main(String argv[]) throws Exception 
     { 
-		String txt = "compilation#./src/ca/uqac/registraire/Cours.java,./src/ca/uqac/registraire/Etudiant.java#./classes";
+		String txt = "fonction#c1234#setNomProfesseur#java.lang.String:Labonté";
 		Commande cmd = new Commande(txt);
+		System.out.println(cmd.toString());	
+		txt = "fonction#c1234#ajouteEtudiant#ca.uqac.8inf853.Etudiant:ID(marc)";
+		cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
 		
 		
-		Files.walk(Paths.get("./bin")).forEach(filePath -> {
-		    if (Files.isRegularFile(filePath)) 
-		    {
-		        System.out.println(filePath);
-		    }
-		    
-		});
 		
     }
 	
@@ -239,6 +287,11 @@ public class Commande implements Serializable {
 	
 	public String getValeur() {
 		return valeur;
+	}
+	
+	public class Couple{
+		public String type;
+		public String valeur;
 	}
 
 }
