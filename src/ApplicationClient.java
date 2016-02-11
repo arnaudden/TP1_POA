@@ -26,7 +26,7 @@ public class ApplicationClient {
 	
 	private String retourFromServer;
 	
-	BufferedReader read;
+	private BufferedReader read;
 	
 	private FileWriter write;
 	
@@ -81,7 +81,7 @@ public class ApplicationClient {
 	public void initialise(String fichCommandes, String fichSortie) throws IOException{		
 		InputStream ips=new FileInputStream(fichCommandes); 
 		InputStreamReader ipsr=new InputStreamReader(ips);
-		BufferedReader read =new BufferedReader(ipsr);
+		//BufferedReader read =new BufferedReader(ipsr);
 		
 		/*
 		String ligne;
@@ -103,16 +103,16 @@ public class ApplicationClient {
 		*/
 	}
 	
-	
 	public static void main(String argv[]) throws Exception { 
 		
           ApplicationClient client = new ApplicationClient("localhost", 6789);
-          client.traiteCommande(null);
-          client.initialise("commandes.txt", "resultats.txt");
+          //client.traiteCommande(null);
+          //client.initialise("commandes.txt", "resultats.txt");
+          /*
           Commande cmd = new Commande();
           cmd = client.saisisCommande(client.read);
           cmd.toString();
-   
+          */
       } 
 
 }
