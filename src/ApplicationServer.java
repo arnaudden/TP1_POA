@@ -2,6 +2,10 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -66,7 +70,7 @@ public class ApplicationServer {
 			{
 				
 				String chemin = i.next();
-				int compil = TraiteCompilation(chemin);
+				int compil = TraiterCompilation(chemin);
 				if(compil ==0)
 				{
 					System.out.println(chemin + " a ete compile");
@@ -98,19 +102,21 @@ public class ApplicationServer {
 			
 		case "lecture" :
 			
+			traiterLecture(tabObject.get(uneCommande.getIdentificateur()), uneCommande.getNomAttribut());
 			break;
 			
 		case "ecriture":
 			
-			for(HashMap.Entry<String,Object> entry: tabObject.entrySet())
-			{
-				if(entry.getKey().equals(uneCommande.getIdentificateur()))
-				{
-					traiterEcriture(entry, uneCommande.getNomAttribut(), uneCommande.getValeur());
-				}
-			}
+			traiterEcriture(tabObject.get(uneCommande.getIdentificateur()), uneCommande.getNomAttribut(), uneCommande.getValeur());
 			
 			break;
+		case "fonction":
+			
+			
+			
+			
+			break;
+			
 			
 		default: System.out.println("Fonction Inconnue");
 			
@@ -125,11 +131,81 @@ public class ApplicationServer {
 	 * @param attribut : attribut de la classe
 	 */
 	
-	public void TraiteLecture(Object objet, String attribut)
+	public void traiterLecture(Object objet, String attribut)
 	{
+		System.out.println("Lancement de lecture de l'attribut " + attribut + " de l'objet " + objet);
 		
+		// Récupération des attributs de la classe
+		Field[] fields = objet.getClass().getDeclaredFields();
+		Field f;
 		
+		// Récupération des méthodes de la classe
+		Method[] methods = objet.getClass().getMethods();
+		Method m;
 		
+		Object result = new Object();
+		
+
+		for(int i=0 ; i< fields.length; i++)
+		{
+			f = fields[i];
+			if(f.getName().equals(attribut))
+			{
+				if(Modifier.isPublic(f.getModifiers()))
+				{
+					try {
+						
+						result = f.get(objet);
+						
+					} 
+					
+					catch (IllegalArgumentException e) 
+					{
+						
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						
+					} 
+					
+					catch (IllegalAccessException e) 
+					
+					{
+						// TODO Auto-generated catch block
+						// Exécuter si le champ est privé
+						e.printStackTrace();
+						
+					}
+				}
+			}
+			else if (Modifier.isPrivate(f.getModifiers()))
+			{
+				String s1 = attribut.substring(0, 1).toUpperCase() + attribut.substring(1);
+				String get = "get" + s1;
+				for(int l =0; l<methods.length;l++)
+				{
+					m = methods[l];
+					if(m.getName().equals(get))
+					{
+						try {
+							result = m.invoke(objet);
+							System.out.println(result);
+						} catch (IllegalAccessException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IllegalArgumentException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InvocationTargetException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+			
+		}
+		
+		System.out.println("Le champ " + attribut + " vaut " + result);
 	}
 	
 	
@@ -139,7 +215,7 @@ public class ApplicationServer {
 	 * @return un int qui permet de savoir si la compilation s'est bien déroulé
 	 */
 	
-	public int TraiteCompilation(String cheminFichierSource)
+	public int TraiterCompilation(String cheminFichierSource)
 	
 	{
 		System.setProperty("java.home", "C:\\Program Files (x86)\\Java\\jdk1.7.0_80");
@@ -184,15 +260,12 @@ public class ApplicationServer {
 	
 	public void traiterCreation(Class classeDeLobjet, String identificateur) 
 	{
-		switch(classeDeLobjet.getName())
-		
-		{
-		case "ca.uqac.registraire.Cours": 
+		System.out.println("Lancement de la création de l'objet " + identificateur + " qui est une classe " + classeDeLobjet.getName());
 			try 
 			{
-				Object cours = classeDeLobjet.newInstance();
-				tabObject.put(identificateur, cours);
-				
+				Object objet = classeDeLobjet.newInstance();
+				tabObject.put(identificateur, objet);
+				System.out.println("L'objet " + tabObject.get(identificateur).getClass() + " a bien été créé avec l'identifiant " + identificateur );
 			} 
 			catch (InstantiationException e) 
 			{
@@ -207,31 +280,6 @@ public class ApplicationServer {
 				e.printStackTrace();
 			}
 			
-			break;
-		case "ca.uqac.registraire.Etudiant" : 
-			
-			try 
-			{
-				Object student = classeDeLobjet.newInstance();
-				tabObject.put(identificateur, student);
-			} 
-			
-			catch (InstantiationException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			catch (IllegalAccessException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			break;
-			
-		default: System.out.println("Classe non chargée");
-		}
 	}
 	
 	
@@ -243,10 +291,90 @@ public class ApplicationServer {
 	 */
 	public void traiterEcriture(Object pointeurObjet, String attribut, Object valeur) 
 	{
+		System.out.println("Lancement de Ecriture de l'attribut " + attribut + " avec la valeur " + valeur + " de l'objet " + pointeurObjet);
+		
+		// Récupération des attributs de la classe
+		Field[] fields = pointeurObjet.getClass().getDeclaredFields();
+		Field f;
+		
+		// Récupération des méthodes de la classe
+		Method[] methods = pointeurObjet.getClass().getMethods();
+		Method m;
 		
 		
+
 		
+		for(int i=0 ; i< fields.length; i++)
+		{
+			f = fields[i];
+			if(f.getName().equals(attribut))
+			{
+				
+				if(Modifier.isPublic(f.getModifiers()))
+				{
+					try {
+						
+						f.set(pointeurObjet, valeur);
+						Object o = f.get(pointeurObjet);
+						System.out.println(o.toString());
+						
+					} 
+					
+					catch (IllegalArgumentException e) 
+					{
+						
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						
+					} 
+					
+					catch (IllegalAccessException e) 
+					
+					{
+						// TODO Auto-generated catch block
+						// Exécuter si le champ est privé
+						e.printStackTrace();
+						
+					}
+					
+				}
+				else if (Modifier.isPrivate(f.getModifiers()))
+				{
+					
+					String s1 = attribut.substring(0, 1).toUpperCase() + attribut.substring(1);
+					String set = "set" + s1;
+					
+					for(int j =0; j<methods.length;j++)
+					{
+						m = methods[j];
+						if(m.getName().equals(set))
+						{
+							try {
+								m.invoke(pointeurObjet, valeur);
+							} catch (IllegalAccessException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (IllegalArgumentException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (InvocationTargetException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+					
+				}
+					
+			}
+		}
+		
+		System.out.println("L'attribut " + attribut + " a bien été écrit avec la valeur " + valeur);
 	}
+	
+	
+	
+	
 	
 	
 	
@@ -288,13 +416,16 @@ public class ApplicationServer {
 		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
 		Commande newCommande2  = new Commande("chargement#ca.uqac.registraire.Etudiant");
 		Commande newCommande3  = new Commande("creation#ca.uqac.registraire.Cours#8inf853");
-		Commande newCommande4  = new Commande("creation#ca.uqac.registraire.Cours#8inf843");
-		Commande newCommande5  = new Commande("creation#ca.uqac.registraire.Etudiant#mathilde");
+		Commande newCommande4  = new Commande("creation#ca.uqac.registraire.Etudiant#raymond");
+		Commande newCommande5  = new Commande("ecriture#raymond#nom#Raymond Sauve");
+		Commande newCommande6  = new Commande("lecture#raymond#nom");
 		server.TraiteCommande(newCommande);
 		server.TraiteCommande(newCommande2);
 		server.TraiteCommande(newCommande3);
 		server.TraiteCommande(newCommande4);
 		server.TraiteCommande(newCommande5);
+		server.TraiteCommande(newCommande6);
+		
     }
 	
 	    	 
