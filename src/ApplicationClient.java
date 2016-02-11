@@ -8,50 +8,64 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ApplicationClient {
 	
 	
 	private Socket clientSocket;
 	
-	private DataOutputStream outToServer;
+	private ObjectOutputStream outToServer;
 	
-	private String commande;
+	private Commande commande;
 	
-	private BufferedReader inFromServer;
+	private ObjectInputStream inFromServer;
 	
-	private String retourFromServer;
+	private Object retourFromServer;
 	
 	private BufferedReader read;
 	
 	private FileWriter write;
 	
+	private static ArrayList<Commande> listCommande;
+	
 	
 	
 	public ApplicationClient(String hostName, int port) throws Exception
 	{
+		listCommande=new ArrayList<Commande>();
 		clientSocket = new Socket(hostName, port);
 	}
 	
 	public void traiteCommande(Commande uneCommande) throws IOException 
 	{
-		outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
+		outToServer = new ObjectOutputStream(clientSocket.getOutputStream()); 
 		
-		inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 		
-		commande = "serveur fonctionnel";
+		//commande = "serveur fonctionnel";
 		
-        outToServer.writeBytes(commande + '\n'); 
+        //outToServer.writeBytes(commande + '\n'); 
+		
+		outToServer.writeObject(uneCommande);
         
-        retourFromServer = inFromServer.readLine(); 
+        try {
+			retourFromServer = inFromServer.readObject();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
         
-        System.out.println("FROM SERVER: " + retourFromServer); 
+        System.out.println("FROM SERVER: " + retourFromServer.toString()); 
         
-        clientSocket.close();           
+               
 		
 	}
 	
@@ -61,11 +75,16 @@ public class ApplicationClient {
 	 * @throws IOException 
 	*/
 	public Commande saisisCommande(BufferedReader fichier) throws IOException{
+		
 		String cmdLine = new String();
+		
 		cmdLine=fichier.readLine();
+		
 		if(cmdLine!=null){
 			Commande cmd = new Commande(cmdLine);
+			System.out.println(cmd);
 			return cmd;
+			
 		}
 
 		Commande cmd = new Commande(cmdLine);
@@ -81,19 +100,20 @@ public class ApplicationClient {
 	public void initialise(String fichCommandes, String fichSortie) throws IOException{		
 		InputStream ips=new FileInputStream(fichCommandes); 
 		InputStreamReader ipsr=new InputStreamReader(ips);
-		//BufferedReader read =new BufferedReader(ipsr);
+		read =new BufferedReader(ipsr);
 		
-		/*
+		
 		String ligne;
-		String chaine ="";
-		while ((ligne=read.readLine())!=null){
-			System.out.println(ligne);
-			chaine+=ligne+"\n";
+		while ((ligne=read.readLine())!=null)
+		{
+			commande = new Commande(ligne);
+			System.out.println(commande.toString());
+			listCommande.add(commande);
+			
 		}
 		read.close();
-		System.out.println(chaine);
-		*/
 		
+	
 		FileWriter fw = new FileWriter (fichSortie);		
 		BufferedWriter write = new BufferedWriter (fw);
 		/*
@@ -107,12 +127,12 @@ public class ApplicationClient {
 		
           ApplicationClient client = new ApplicationClient("localhost", 6789);
           //client.traiteCommande(null);
-          //client.initialise("commandes.txt", "resultats.txt");
-          /*
-          Commande cmd = new Commande();
-          cmd = client.saisisCommande(client.read);
-          cmd.toString();
-          */
+          client.initialise("commandes.txt", "resultats.txt");
+          
+          Commande cmd = listCommande.get(1);
+          
+          client.traiteCommande(cmd);
+          
       } 
 
 }

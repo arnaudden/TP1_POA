@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,17 +26,15 @@ public class ApplicationServer {
 
 	private ServerSocket welcomeSocket;
 	
-	private BufferedReader bufferFromClient;
+	private ObjectInputStream objectFromClient;
 	
-	private DataOutputStream outToClient;
+	private ObjectOutputStream objectToClient;
 	
 	private Socket connectionSocket;
 	
 	private Commande commandeFromClient;
 	
-	private String clientSentence;
-	
-	private String serverSentence;
+	private String serverToClientSentence;
 	
 	private HashMap<String, Class> tabClass;
 	
@@ -54,9 +54,10 @@ public class ApplicationServer {
 	/**
 	 * Traite une commande reçu par le serveur en appelant la méthode spécifiée
 	 * @param uneCommande : commande reçu par le serveur
+	 * @throws IOException 
 	 */
 	
-	public void TraiteCommande(Commande uneCommande)
+	public void TraiteCommande(Commande uneCommande) throws IOException
 	{
 		switch(uneCommande.getFonction())
 		
@@ -70,14 +71,8 @@ public class ApplicationServer {
 			{
 				
 				String chemin = i.next();
-				int compil = TraiterCompilation(chemin);
-				if(compil ==0)
-				{
-					System.out.println(chemin + " a ete compile");
-				}
-				else
-					System.err.println("Erreur de compilation de la classe " + chemin);
-				
+				TraiterCompilation(chemin);
+
 			}
 			break;
 			
@@ -204,8 +199,9 @@ public class ApplicationServer {
 			}
 			
 		}
-		
-		System.out.println("Le champ " + attribut + " vaut " + result);
+		serverToClientSentence = "Le champ " + attribut + " vaut " + result;
+		System.out.println(serverToClientSentence);
+		sendMessageToClient();
 	}
 	
 	
@@ -213,9 +209,10 @@ public class ApplicationServer {
 	 * Fonction qui compile une classe java
 	 * @param cheminFichierSource : chemin du fichier à compiler
 	 * @return un int qui permet de savoir si la compilation s'est bien déroulé
+	 * @throws IOException 
 	 */
 	
-	public int TraiterCompilation(String cheminFichierSource)
+	public void TraiterCompilation(String cheminFichierSource) 
 	
 	{
 		System.setProperty("java.home", "C:\\Program Files (x86)\\Java\\jdk1.7.0_80");
@@ -223,7 +220,14 @@ public class ApplicationServer {
 		
 		int result = compiler.run(null, null, null, cheminFichierSource);
 		System.out.println(result);
-		return result;
+		
+		if(result ==0)
+		{
+			serverToClientSentence = cheminFichierSource + " a été compile";
+			System.out.println(serverToClientSentence);
+			sendMessageToClient();
+		}
+		
 	}
 	
 	/**
@@ -245,10 +249,9 @@ public class ApplicationServer {
 	        e.printStackTrace();
 	    }
 		
-		for(HashMap.Entry<String,Class> entry: tabClass.entrySet())
-		{
-			System.out.println("nom de la clé : " + entry.getKey() + " nom de la classe à partir de la valeur : " + entry.getValue().getName());
-		}
+		serverToClientSentence = nomClasse + "a été chargée";
+		System.out.println(serverToClientSentence);
+		sendMessageToClient();
 		
 	}
 	
@@ -265,7 +268,6 @@ public class ApplicationServer {
 			{
 				Object objet = classeDeLobjet.newInstance();
 				tabObject.put(identificateur, objet);
-				System.out.println("L'objet " + tabObject.get(identificateur).getClass() + " a bien été créé avec l'identifiant " + identificateur );
 			} 
 			catch (InstantiationException e) 
 			{
@@ -280,6 +282,9 @@ public class ApplicationServer {
 				e.printStackTrace();
 			}
 			
+			serverToClientSentence = "L'objet " + tabObject.get(identificateur).getClass() + " a bien été créé avec l'identifiant " + identificateur;
+			System.out.println(serverToClientSentence);
+			sendMessageToClient();
 	}
 	
 	
@@ -370,7 +375,9 @@ public class ApplicationServer {
 			}
 		}
 		
-		System.out.println("L'attribut " + attribut + " a bien été écrit avec la valeur " + valeur);
+		serverToClientSentence ="L'attribut " + attribut + " a bien été écrit avec la valeur " + valeur;
+		System.out.println(serverToClientSentence);
+		sendMessageToClient();
 	}
 	
 	
@@ -379,34 +386,45 @@ public class ApplicationServer {
 	
 	
 	
-	public void aVosOrdres() throws IOException 
+	public void aVosOrdres() throws IOException, ClassNotFoundException 
 	{
 		while(true) { 
 			
 			connectionSocket = welcomeSocket.accept(); 
 		    
-		    bufferFromClient =  new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+		    objectFromClient =  new ObjectInputStream(connectionSocket.getInputStream());
 		
-		    outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		    objectToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
 			
-			clientSentence = bufferFromClient.readLine(); 
 			
-			//commandeFromClient = new Commande(clientSentence);
 			
-			System.out.println("Mesasge from Client : " + clientSentence);
+			//System.out.println("Mesasge from Client : " + objectFromClient.readObject().toString());
+			
+			Object obj = objectFromClient.readObject();
+			commandeFromClient = (Commande) obj;
+			System.out.println("Mesasge from Client : " + commandeFromClient);
+			
 			
 			TraiteCommande(commandeFromClient);
 	    	
-	    	serverSentence = clientSentence.toUpperCase() + '\n'; 
-	    	
-	    	outToClient.writeBytes(serverSentence); 
 	    	
 		}
 		
 	}
 	
 	
+	public void sendMessageToClient()
 	
+	{
+		try 
+		{
+			connectionSocket = welcomeSocket.accept(); 
+			objectToClient.writeObject(serverToClientSentence);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public static void main(String argv[]) throws Exception 
     { 
