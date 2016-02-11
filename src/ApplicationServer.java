@@ -391,7 +391,7 @@ public class ApplicationServer {
 			
 			clientSentence = bufferFromClient.readLine(); 
 			
-			commandeFromClient = new Commande(clientSentence);
+			//commandeFromClient = new Commande(clientSentence);
 			
 			System.out.println("Mesasge from Client : " + clientSentence);
 			
@@ -411,7 +411,7 @@ public class ApplicationServer {
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);
-		//server.aVosOrdres();
+		server.aVosOrdres();
 		
 		
 		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
