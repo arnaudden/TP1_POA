@@ -16,20 +16,28 @@ public class Commande implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	// fonction possible {Compilation, Chargement, Creation, Lecture, Fonction}
+	/**
+	 *  fonction possible {Compilation, Chargement, Creation, Lecture, Fonction}
+	 */
 	private String fonction;
 	
 
 	//Fonction
 	private String cheminRelatifDesFichiers;
 	
-	//Compilation
+	/**
+	 * ArrayList correspondant aux chemins des fichiers à compiler lors de l'appel de la fonction : Compilation
+	 */
 	private ArrayList<String> path;
 	
-	// Chargement
+	/**
+	 * String contenant le nom de la classe a charger lors de l'appel de la fonction Chargement
+	 */
 	private String nomQualifieDeClasse;
 	
-	// Creation 
+	/**
+	 * 
+	 */
 	private String nomDeClasse;
 	
 	// Creation & lecture & ecriture & fonction
@@ -41,10 +49,12 @@ public class Commande implements Serializable {
 	// ecriture
 	private String valeur;
 	
-	// Fonction
+	// Fonction appelé par la commande fonction sur le serveur
 	private String nom_fonction;
 	
-	// Fonction
+	/**
+	 * ArrayList correspondant aux paramètres appelés par une fonction
+	 */
 	private ArrayList<Couple> liste_parametres;
 	
 	//Fonction
