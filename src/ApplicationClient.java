@@ -115,7 +115,7 @@ public class ApplicationClient {
           client.initialise("commandes.txt", "resultats.txt");
           
           
-          for(int i = 0; i<6 ; i++)
+          for(int i = 0; i<listCommande.size() ; i++)
           {
         	  Commande cmd = listCommande.get(i);
               System.out.println("traitement de la commande "+ cmd); 

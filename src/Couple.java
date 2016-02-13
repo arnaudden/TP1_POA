@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Couple {
+public class Couple implements Serializable  {
 
 	private String type;
 	private String valeur;

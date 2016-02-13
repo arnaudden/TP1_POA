@@ -10,3 +10,41 @@ Fonction: lecture, identificateur: 8inf853, nom d'attribut: titre a été envoyé
 FROM SERVER: Le champ titre vaut Architecture des applications
 Fonction: creation, nom de classe: ca.uqac.registraire.Cours, identificateur: 8inf843 a été envoyé
 FROM SERVER: L'objet class ca.uqac.registraire.Cours a bien été créé avec l'identifiant 8inf843
+Fonction: ecriture, identificateur : 8inf843, nom d'attribut: titre, valeur: Systemes repartis a été envoyé
+FROM SERVER: L'attribut titre a bien été écrit avec la valeur Systemes repartis
+Fonction: chargement, nom qualifie de classe: ca.uqac.registraire.Etudiant a été envoyé
+FROM SERVER: ca.uqac.registraire.Etudianta été chargée
+Fonction: creation, nom de classe: ca.uqac.registraire.Etudiant, identificateur: mathilde a été envoyé
+FROM SERVER: L'objet class ca.uqac.registraire.Etudiant a bien été créé avec l'identifiant mathilde
+Fonction: ecriture, identificateur : mathilde, nom d'attribut: nom, valeur: Mathilde Boivin a été envoyé
+FROM SERVER: L'attribut nom a bien été écrit avec la valeur Mathilde Boivin
+Fonction: creation, nom de classe: ca.uqac.registraire.Etudiant, identificateur: raymond a été envoyé
+FROM SERVER: L'objet class ca.uqac.registraire.Etudiant a bien été créé avec l'identifiant raymond
+Fonction: ecriture, identificateur : raymond, nom d'attribut: nom, valeur: Raymond Sauve a été envoyé
+FROM SERVER: L'attribut nom a bien été écrit avec la valeur Raymond Sauve
+Fonction: fonction, identificateur: 8inf853, nom_fonction: getNote,type: ca.uqac.registraire.Etudiant, ID: mathilde,parametres :  a été envoyé
+FROM SERVER: L'attribut nom a bien été écrit avec la valeur Raymond Sauve
+Fonction: fonction, identificateur: mathilde, nom_fonction: inscrisDansCours,type: ca.uqac.registraire.Cours, ID: 8inf853,parametres :  a été envoyé
+FROM SERVER: La fonction inscrisDansCours a bien été exécutée
+Fonction: fonction, identificateur: 8inf853, nom_fonction: attributeNote,type: ca.uqac.registraire.Etudiant, ID: mathilde,parametres : type: float, valeur: 3.7 a été envoyé
+FROM SERVER: La fonction attributeNote a bien été exécutée
+Fonction: fonction, identificateur: 8inf853, nom_fonction: getNote,type: ca.uqac.registraire.Etudiant, ID: mathilde,parametres :  a été envoyé
+FROM SERVER: La fonction getNote renvoie 3.7
+Fonction: fonction, identificateur: mathilde, nom_fonction: inscrisDansCours,type: ca.uqac.registraire.Cours, ID: 8inf843,parametres :  a été envoyé
+FROM SERVER: La fonction inscrisDansCours a bien été exécutée
+Fonction: fonction, identificateur: 8inf843, nom_fonction: attributeNote,type: ca.uqac.registraire.Etudiant, ID: mathilde,parametres : type: float, valeur: 4.0 a été envoyé
+FROM SERVER: La fonction attributeNote a bien été exécutée
+Fonction: fonction, identificateur: mathilde, nom_fonction: getMoyenne,parametres :  a été envoyé
+FROM SERVER: La fonction getMoyenne renvoie 3.85
+Fonction: fonction, identificateur: raymond, nom_fonction: inscrisDansCours,type: ca.uqac.registraire.Cours, ID: 8inf853,parametres :  a été envoyé
+FROM SERVER: La fonction inscrisDansCours a bien été exécutée
+Fonction: fonction, identificateur: raymond, nom_fonction: inscrisDansCours,type: ca.uqac.registraire.Cours, ID: 8inf843,parametres :  a été envoyé
+FROM SERVER: La fonction inscrisDansCours a bien été exécutée
+Fonction: fonction, identificateur: 8inf853, nom_fonction: attributeNote,type: ca.uqac.registraire.Etudiant, ID: raymond,parametres : type: float, valeur: 3.0 a été envoyé
+FROM SERVER: La fonction attributeNote a bien été exécutée
+Fonction: fonction, identificateur: 8inf843, nom_fonction: attributeNote,type: ca.uqac.registraire.Etudiant, ID: raymond,parametres : type: float, valeur: 2.7 a été envoyé
+FROM SERVER: La fonction attributeNote a bien été exécutée
+Fonction: fonction, identificateur: mathilde, nom_fonction: getMoyenne,parametres :  a été envoyé
+FROM SERVER: La fonction getMoyenne renvoie 3.85
+Fonction: fonction, identificateur: 8inf853, nom_fonction: toString,parametres :  a été envoyé
+FROM SERVER: La fonction toString renvoie Cours(Titre: Architecture des applications <Raymond Sauve[2.85] = 3.0 , Mathilde Boivin[3.85] = 3.7 >)

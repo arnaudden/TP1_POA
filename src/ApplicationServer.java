@@ -188,7 +188,7 @@ public class ApplicationServer {
 		}
 		serverToClientSentence = "Le champ " + attribut + " vaut " + result;
 		System.out.println(serverToClientSentence);
-		//sendMessageToClient();
+		sendMessageToClient();
 	}
 	
 	
@@ -247,7 +247,7 @@ public class ApplicationServer {
 		
 		serverToClientSentence = nomClasse + "a été chargée";
 		System.out.println(serverToClientSentence);
-		//sendMessageToClient();
+		sendMessageToClient();
 		
 	}
 	
@@ -281,7 +281,7 @@ public class ApplicationServer {
 			
 			serverToClientSentence = "L'objet " + tabObject.get(identificateur).getClass() + " a bien été créé avec l'identifiant " + identificateur;
 			System.out.println(serverToClientSentence);
-			//sendMessageToClient();
+			sendMessageToClient();
 	}
 	
 	
@@ -375,7 +375,7 @@ public class ApplicationServer {
 		
 		serverToClientSentence ="L'attribut " + attribut + " a bien été écrit avec la valeur " + valeur;
 		System.out.println(serverToClientSentence);
-		//sendMessageToClient();
+		sendMessageToClient();
 	}
 	
 	
@@ -401,8 +401,15 @@ public class ApplicationServer {
 				{
 					try {
 						resultFunction = m.invoke(pointeurObjet);
-						serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
-						System.out.println(serverToClientSentence);
+						if (resultFunction == null)
+						{
+							serverToClientSentence = "La fonction " + m.getName() + " a bien été exécutée";
+						}
+						else
+						{
+							serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+						}
+
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -419,8 +426,15 @@ public class ApplicationServer {
 					objInFunction = tabObject.get(valObj);
 					try {
 						resultFunction = m.invoke(pointeurObjet, objInFunction);
-						serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
-						System.out.println(serverToClientSentence);
+						if (resultFunction == null)
+						{
+							serverToClientSentence = "La fonction " + m.getName() + " a bien été exécutée";
+						}
+						else
+						{
+							serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+						}
+
 					} catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -442,8 +456,15 @@ public class ApplicationServer {
 						{
 							float param = Float.parseFloat(params.getValeur());
 							resultFunction = m.invoke(pointeurObjet, objInFunction, param);
-							serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
-							System.out.println(serverToClientSentence);
+							if (resultFunction == null)
+							{
+								serverToClientSentence = "La fonction " + m.getName() + " a bien été exécutée";
+							}
+							else
+							{
+								serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+							}
+
 						}
 						} catch (IllegalAccessException e)
 						{
@@ -459,6 +480,13 @@ public class ApplicationServer {
 						
 				}
 			}
+		}
+		
+		try {
+			sendMessageToClient();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -508,9 +536,9 @@ public class ApplicationServer {
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);
-		//server.aVosOrdres();
+		server.aVosOrdres();
 		
-		
+		/*
 		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
 		Commande newCommande2  = new Commande("chargement#ca.uqac.registraire.Etudiant");
 		Commande newCommande3  = new Commande("creation#ca.uqac.registraire.Cours#8inf853");
@@ -539,7 +567,7 @@ public class ApplicationServer {
 		server.TraiteCommande(newCommande12);
 		server.TraiteCommande(newCommande13);
 		server.TraiteCommande(newCommande14);
-		
+		*/
     }
 	
 	    	 
