@@ -1,0 +1,12 @@
+Fonction: compilation, chemin relatif :./src/ca/uqac/registraire/Cours.java, ./src/ca/uqac/registraire/Etudiant.java,  Chemin relatif des fichiers : ./classes a été envoyé
+FROM SERVER: Les classes ont été compilé
+Fonction: chargement, nom qualifie de classe: ca.uqac.registraire.Cours a été envoyé
+FROM SERVER: ca.uqac.registraire.Coursa été chargée
+Fonction: creation, nom de classe: ca.uqac.registraire.Cours, identificateur: 8inf853 a été envoyé
+FROM SERVER: L'objet class ca.uqac.registraire.Cours a bien été créé avec l'identifiant 8inf853
+Fonction: ecriture, identificateur : 8inf853, nom d'attribut: titre, valeur: Architecture des applications a été envoyé
+FROM SERVER: L'attribut titre a bien été écrit avec la valeur Architecture des applications
+Fonction: lecture, identificateur: 8inf853, nom d'attribut: titre a été envoyé
+FROM SERVER: Le champ titre vaut Architecture des applications
+Fonction: creation, nom de classe: ca.uqac.registraire.Cours, identificateur: 8inf843 a été envoyé
+FROM SERVER: L'objet class ca.uqac.registraire.Cours a bien été créé avec l'identifiant 8inf843

@@ -17,79 +17,62 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.sun.corba.se.spi.ior.Writeable;
+
 public class ApplicationClient {
 	
+	private String hostName;
+	
+	private int port;
 	
 	private Socket clientSocket;
 	
-	private ObjectOutputStream outToServer;
-	
 	private Commande commande;
-	
-	private ObjectInputStream inFromServer;
 	
 	private Object retourFromServer;
 	
-	private BufferedReader read;
-	
-	private FileWriter write;
+	private PrintWriter write;
 	
 	private static ArrayList<Commande> listCommande;
 	
 	
 	
-	public ApplicationClient(String hostName, int port) throws Exception
+	public ApplicationClient(String hostn, int pt) throws Exception
 	{
 		listCommande=new ArrayList<Commande>();
-		clientSocket = new Socket(hostName, port);
+		hostName = hostn;
+		port = pt;
 	}
 	
-	public void traiteCommande(Commande uneCommande) throws IOException 
+	public Object traiteCommande(Commande uneCommande) throws IOException 
 	{
-		outToServer = new ObjectOutputStream(clientSocket.getOutputStream()); 
 		
-		inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+		clientSocket = new Socket(hostName, port);
+		System.out.println(clientSocket.isConnected());
+		ObjectOutputStream outToServer2 = new ObjectOutputStream(clientSocket.getOutputStream());
+		ObjectInputStream inFromServer2 = new ObjectInputStream(clientSocket.getInputStream());
+
 		
-		//commande = "serveur fonctionnel";
+		outToServer2.writeObject(uneCommande);
 		
-        //outToServer.writeBytes(commande + '\n'); 
+		System.out.println(uneCommande + " a été envoyé");
+		write.println(uneCommande + " a été envoyé");
 		
-		outToServer.writeObject(uneCommande);
-        
         try {
-			retourFromServer = inFromServer.readObject();
+			retourFromServer = inFromServer2.readObject();
+			System.out.println("test 3");
+			write.println("FROM SERVER: " + retourFromServer.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
         
-        System.out.println("FROM SERVER: " + retourFromServer.toString()); 
-        
+        clientSocket.close();
+        return retourFromServer;
                
 		
 	}
 	
-	/**
-	* prend le fichier contenant la liste des commandes, et le charge dans une
-	* variable du type Commande qui est retournée
-	 * @throws IOException 
-	*/
-	public Commande saisisCommande(BufferedReader fichier) throws IOException{
-		
-		String cmdLine = new String();
-		
-		cmdLine=fichier.readLine();
-		
-		if(cmdLine!=null){
-			Commande cmd = new Commande(cmdLine);
-			System.out.println(cmd);
-			return cmd;
-			
-		}
-
-		Commande cmd = new Commande(cmdLine);
-		return cmd;
-	}
 	
 	/**
 	* initialise : ouvre les différents fichiers de lecture et écriture
@@ -100,14 +83,13 @@ public class ApplicationClient {
 	public void initialise(String fichCommandes, String fichSortie) throws IOException{		
 		InputStream ips=new FileInputStream(fichCommandes); 
 		InputStreamReader ipsr=new InputStreamReader(ips);
-		read =new BufferedReader(ipsr);
+		BufferedReader read =new BufferedReader(ipsr);
 		
 		
 		String ligne;
 		while ((ligne=read.readLine())!=null)
 		{
 			commande = new Commande(ligne);
-			System.out.println(commande.toString());
 			listCommande.add(commande);
 			
 		}
@@ -115,13 +97,16 @@ public class ApplicationClient {
 		
 	
 		FileWriter fw = new FileWriter (fichSortie);		
-		BufferedWriter write = new BufferedWriter (fw);
-		/*
-		PrintWriter fichierSortie = new PrintWriter (write); 
-		fichierSortie.println ("heyy"+"\n test de lecture et écriture !!"); 
-		fichierSortie.close();
-		*/
+		BufferedWriter buffWriter = new BufferedWriter (fw);
+		write = new PrintWriter(buffWriter);
 	}
+	
+	public void closeFile()
+	{
+		write.close();
+	}
+	
+	
 	
 	public static void main(String argv[]) throws Exception { 
 		
@@ -129,9 +114,17 @@ public class ApplicationClient {
           //client.traiteCommande(null);
           client.initialise("commandes.txt", "resultats.txt");
           
-          Commande cmd = listCommande.get(1);
           
-          client.traiteCommande(cmd);
+          for(int i = 0; i<6 ; i++)
+          {
+        	  Commande cmd = listCommande.get(i);
+              System.out.println("traitement de la commande "+ cmd); 
+              Object obj = client.traiteCommande(cmd);
+              System.out.println("FROM SERVER: " + obj.toString()); 
+          }
+          
+          
+          client.closeFile();
           
       } 
 

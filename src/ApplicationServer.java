@@ -48,7 +48,6 @@ public class ApplicationServer {
 	    System.out.println("SERVER Is Ready!" );
 	    tabClass = new HashMap<String, Class>();
 	    tabObject = new HashMap<String, Object>();
-	    
 	}
 	
 	/**
@@ -66,14 +65,9 @@ public class ApplicationServer {
 		case "compilation": 
 			
 			ArrayList<String> path = uneCommande.getPath();
+			TraiterCompilation(path);
 			
-			for (Iterator<String> i =path.iterator(); i.hasNext();)
-			{
-				
-				String chemin = i.next();
-				TraiterCompilation(chemin);
-
-			}
+			
 			break;
 			
 		case "chargement":
@@ -124,9 +118,10 @@ public class ApplicationServer {
 	 * Lecture d'un attribut d'une classe
 	 * @param objet : objet correspondant à une classe
 	 * @param attribut : attribut de la classe
+	 * @throws IOException 
 	 */
 	
-	public void traiterLecture(Object objet, String attribut)
+	public void traiterLecture(Object objet, String attribut) throws IOException
 	{
 		System.out.println("Lancement de lecture de l'attribut " + attribut + " de l'objet " + objet);
 		
@@ -212,30 +207,39 @@ public class ApplicationServer {
 	 * @throws IOException 
 	 */
 	
-	public void TraiterCompilation(String cheminFichierSource) 
+	public void TraiterCompilation(ArrayList<String> path)
 	
 	{
 		System.setProperty("java.home", "C:\\Program Files (x86)\\Java\\jdk1.7.0_80");
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		
-		int result = compiler.run(null, null, null, cheminFichierSource);
-		System.out.println(result);
 		
-		if(result ==0)
+		for (Iterator<String> i =path.iterator(); i.hasNext();)
 		{
-			serverToClientSentence = cheminFichierSource + " a été compile";
-			System.out.println(serverToClientSentence);
-			sendMessageToClient();
+			
+			String cheminFichierSource = i.next();
+			compiler.run(null, null, null, cheminFichierSource);
 		}
 		
-	}
+		serverToClientSentence =  "Les classes ont été compilé";
+		System.out.println(serverToClientSentence);
+		try {
+			sendMessageToClient();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		}
+		
 	
 	/**
 	 * Charge une classe qui aura été préalablement compilée
 	 * @param nomClasse : correspond au nom de la classe à charger
+	 * @throws IOException 
 	 */
 	
-	public void traiterChargement(String nomClasse) 
+	public void traiterChargement(String nomClasse) throws IOException 
 	{
 		
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -259,9 +263,10 @@ public class ApplicationServer {
 	 * Classe qui gère la création d'un objet
 	 * @param classeDeLobjet
 	 * @param identificateur
+	 * @throws IOException 
 	 */
 	
-	public void traiterCreation(Class classeDeLobjet, String identificateur) 
+	public void traiterCreation(Class classeDeLobjet, String identificateur) throws IOException 
 	{
 		System.out.println("Lancement de la création de l'objet " + identificateur + " qui est une classe " + classeDeLobjet.getName());
 			try 
@@ -293,8 +298,9 @@ public class ApplicationServer {
 	 * @param pointeurObjet : objet que nous devons écrire
 	 * @param attribut : attribut à modifier de l'objet
 	 * @param valeur : valeur à écrire dans l'attribut
+	 * @throws IOException 
 	 */
-	public void traiterEcriture(Object pointeurObjet, String attribut, Object valeur) 
+	public void traiterEcriture(Object pointeurObjet, String attribut, Object valeur) throws IOException 
 	{
 		System.out.println("Lancement de Ecriture de l'attribut " + attribut + " avec la valeur " + valeur + " de l'objet " + pointeurObjet);
 		
@@ -388,18 +394,16 @@ public class ApplicationServer {
 	
 	public void aVosOrdres() throws IOException, ClassNotFoundException 
 	{
+		
 		while(true) { 
-			
-			connectionSocket = welcomeSocket.accept(); 
-		    
+			System.out.println("server : test0");
+			connectionSocket = welcomeSocket.accept();
+			System.out.println("server : test1");
 		    objectFromClient =  new ObjectInputStream(connectionSocket.getInputStream());
 		
 		    objectToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
-			
-			
-			
-			//System.out.println("Mesasge from Client : " + objectFromClient.readObject().toString());
-			
+
+		    System.out.println("server : test2");
 			Object obj = objectFromClient.readObject();
 			commandeFromClient = (Commande) obj;
 			System.out.println("Mesasge from Client : " + commandeFromClient);
@@ -413,12 +417,11 @@ public class ApplicationServer {
 	}
 	
 	
-	public void sendMessageToClient()
+	public void sendMessageToClient() throws IOException
 	
 	{
 		try 
 		{
-			connectionSocket = welcomeSocket.accept(); 
 			objectToClient.writeObject(serverToClientSentence);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
