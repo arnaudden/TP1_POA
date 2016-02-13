@@ -52,6 +52,9 @@ public class Commande implements Serializable {
 	// Fonction appelé par la commande fonction sur le serveur
 	private String nom_fonction;
 	
+
+
+
 	/**
 	 * ArrayList correspondant aux paramètres appelés par une fonction
 	 */
@@ -59,7 +62,7 @@ public class Commande implements Serializable {
 	
 	//Fonction
 	private String type;
-	
+
 	//Fonction
 	private String id_identificateur;
 	
@@ -153,8 +156,8 @@ public class Commande implements Serializable {
 					if(indice <0){
 						indice2 = tmp.indexOf(":");
 						if(indice2 > 0){
-							cpl.type = tmp.substring(0, indice2);
-							cpl.valeur = tmp.substring(indice2);
+							cpl.setType(tmp.substring(0, indice2));
+							cpl.setValeur(tmp.substring(indice2+1));
 							liste_parametres.add(cpl);
 						}
 						break;
@@ -162,9 +165,9 @@ public class Commande implements Serializable {
 					tmp1 = tmp.substring(0, indice);
 					indice2 = tmp1.indexOf(":");
 					if(indice2>0){
-					cpl.type = tmp1.substring(0, indice2);
-					System.out.println(cpl.type);
-					cpl.valeur = tmp1.substring(indice2);
+					cpl.setType(tmp1.substring(0, indice2));
+					System.out.println(cpl.getType());
+					cpl.setValeur(tmp1.substring(indice2));
 					liste_parametres.add(cpl);
 					}
 					tmp = tmp.substring(indice+1);
@@ -211,7 +214,7 @@ public class Commande implements Serializable {
 					for (Iterator<Couple> i =liste_parametres.iterator(); i.hasNext();)
 					{
 						Couple cpl = i.next();
-						result += "type: "+cpl.type +", valeur: " + cpl.valeur;
+						result += "type: "+cpl.getType() +", valeur: " + cpl.getValeur();
 					}
 					
 					break;
@@ -224,10 +227,11 @@ public class Commande implements Serializable {
     { 
 		String txt = "fonction#mathilde#getMoyenne#";
 		Commande cmd = new Commande(txt);
-		System.out.println(cmd.toString());	
-		txt = "fonction#8inf853#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:3.0";
+		System.out.println(cmd.toString());
+		txt = "fonction#8inf843#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:2.7";
 		cmd = new Commande(txt);
 		System.out.println(cmd.toString());	
+		System.out.println(cmd.getListe_parametres().get(0).getValeur());
 		
 		
 		
@@ -240,14 +244,6 @@ public class Commande implements Serializable {
 	 */
 	public String getFonction() {
 		return fonction;
-	}
-
-	/**
-	 * 
-	 * @param fct
-	 */
-	public void setFonction(String fct) {
-		this.fonction = fct;
 	}
 
 	/**
@@ -302,9 +298,20 @@ public class Commande implements Serializable {
 		return valeur;
 	}
 	
-	public class Couple{
-		public String type;
-		public String valeur;
+	
+	public ArrayList<Couple> getListe_parametres() {
+		return liste_parametres;
+	}
+	
+	public String getNom_fonction() {
+		return nom_fonction;
+	}
+	
+	public String getType() {
+		return type;
 	}
 
+	public String getId_identificateur() {
+		return id_identificateur;
+	}
 }

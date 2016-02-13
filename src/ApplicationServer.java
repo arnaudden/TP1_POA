@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
@@ -12,14 +9,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-
-import com.sun.org.apache.bcel.internal.util.ClassSet;
 
 
 public class ApplicationServer {
@@ -101,7 +94,7 @@ public class ApplicationServer {
 			break;
 		case "fonction":
 			
-			
+			traiterFonction(tabObject.get(uneCommande.getIdentificateur()), uneCommande.getNom_fonction(), uneCommande.getListe_parametres(), uneCommande.getType(), uneCommande.getId_identificateur());
 			
 			
 			break;
@@ -178,7 +171,6 @@ public class ApplicationServer {
 					{
 						try {
 							result = m.invoke(objet);
-							System.out.println(result);
 						} catch (IllegalAccessException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -196,7 +188,7 @@ public class ApplicationServer {
 		}
 		serverToClientSentence = "Le champ " + attribut + " vaut " + result;
 		System.out.println(serverToClientSentence);
-		sendMessageToClient();
+		//sendMessageToClient();
 	}
 	
 	
@@ -255,7 +247,7 @@ public class ApplicationServer {
 		
 		serverToClientSentence = nomClasse + "a été chargée";
 		System.out.println(serverToClientSentence);
-		sendMessageToClient();
+		//sendMessageToClient();
 		
 	}
 	
@@ -289,7 +281,7 @@ public class ApplicationServer {
 			
 			serverToClientSentence = "L'objet " + tabObject.get(identificateur).getClass() + " a bien été créé avec l'identifiant " + identificateur;
 			System.out.println(serverToClientSentence);
-			sendMessageToClient();
+			//sendMessageToClient();
 	}
 	
 	
@@ -383,12 +375,92 @@ public class ApplicationServer {
 		
 		serverToClientSentence ="L'attribut " + attribut + " a bien été écrit avec la valeur " + valeur;
 		System.out.println(serverToClientSentence);
-		sendMessageToClient();
+		//sendMessageToClient();
 	}
 	
 	
 	
-	
+	public void traiterFonction(Object pointeurObjet, String nomFonction, ArrayList<Couple> listeParametre, String typeObj, String valObj) 
+	{
+
+		System.out.println("Lancement de la fonction " + nomFonction + " sur l'objet " + pointeurObjet);
+		
+		// Récupération des méthodes de la classe
+		Method[] methods = pointeurObjet.getClass().getMethods();
+		Method m;
+		
+		Object objInFunction = new Object();
+		Object resultFunction = new Object();
+		
+		for(int l =0; l<methods.length;l++)
+		{
+			m = methods[l];
+			if(m.getName().equals(nomFonction))
+			{
+				if(typeObj == null)
+				{
+					try {
+						resultFunction = m.invoke(pointeurObjet);
+						serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+						System.out.println(serverToClientSentence);
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else if (listeParametre.isEmpty())
+				{
+					objInFunction = tabObject.get(valObj);
+					try {
+						resultFunction = m.invoke(pointeurObjet, objInFunction);
+						serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+						System.out.println(serverToClientSentence);
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					objInFunction = tabObject.get(valObj);
+					Couple params = listeParametre.get(0);
+
+					try {
+						if(params.getType().equals("float"))
+						{
+							float param = Float.parseFloat(params.getValeur());
+							resultFunction = m.invoke(pointeurObjet, objInFunction, param);
+							serverToClientSentence = "La fonction " + m.getName() + " renvoie " + resultFunction;
+							System.out.println(serverToClientSentence);
+						}
+						} catch (IllegalAccessException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+				}
+			}
+		}
+	}
 	
 	
 	
@@ -417,6 +489,10 @@ public class ApplicationServer {
 	}
 	
 	
+	
+
+	
+	
 	public void sendMessageToClient() throws IOException
 	
 	{
@@ -432,21 +508,37 @@ public class ApplicationServer {
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);
-		server.aVosOrdres();
+		//server.aVosOrdres();
 		
 		
 		Commande newCommande  = new Commande("chargement#ca.uqac.registraire.Cours");
 		Commande newCommande2  = new Commande("chargement#ca.uqac.registraire.Etudiant");
 		Commande newCommande3  = new Commande("creation#ca.uqac.registraire.Cours#8inf853");
+		Commande newCommande10  = new Commande("creation#ca.uqac.registraire.Cours#8inf843");
 		Commande newCommande4  = new Commande("creation#ca.uqac.registraire.Etudiant#raymond");
 		Commande newCommande5  = new Commande("ecriture#raymond#nom#Raymond Sauve");
 		Commande newCommande6  = new Commande("lecture#raymond#nom");
+		Commande newCommande7  = new Commande("fonction#raymond#inscrisDansCours#ca.uqac.registraire.Cours:ID(8inf853))");
+		Commande newCommande8  = new Commande("fonction#raymond#getMoyenne#");
+		Commande newCommande9  = new Commande("fonction#raymond#inscrisDansCours#ca.uqac.registraire.Cours:ID(8inf843)");
+		Commande newCommande11  = new Commande("fonction#8inf853#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:3.0");
+		Commande newCommande12  = new Commande("fonction#8inf843#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:2.7");
+		Commande newCommande13 = new Commande("fonction#raymond#getMoyenne#");
+		Commande newCommande14 = new Commande("fonction#8inf853#toString#");
 		server.TraiteCommande(newCommande);
 		server.TraiteCommande(newCommande2);
 		server.TraiteCommande(newCommande3);
 		server.TraiteCommande(newCommande4);
+		server.TraiteCommande(newCommande10);
 		server.TraiteCommande(newCommande5);
 		server.TraiteCommande(newCommande6);
+		server.TraiteCommande(newCommande7);
+		server.TraiteCommande(newCommande8);
+		server.TraiteCommande(newCommande9);
+		server.TraiteCommande(newCommande11);
+		server.TraiteCommande(newCommande12);
+		server.TraiteCommande(newCommande13);
+		server.TraiteCommande(newCommande14);
 		
     }
 	
