@@ -17,23 +17,51 @@ import javax.tools.ToolProvider;
 
 public class ApplicationServer {
 
+	/**
+	 * Socket créé pour le serveur
+	 */
 	private ServerSocket welcomeSocket;
 	
+	/**
+	 * Object permettant la réception d'un objet du client
+	 */
 	private ObjectInputStream objectFromClient;
 	
+	/**
+	 * Objet renvoyé au client
+	 */
 	private ObjectOutputStream objectToClient;
 	
+	/**
+	 * Socket validant la connexion du client au serveur
+	 */
 	private Socket connectionSocket;
 	
+	/**
+	 * Commande reçu du client
+	 */
 	private Commande commandeFromClient;
 	
+	/**
+	 * String renvoyé en réponse d'une commande
+	 */
 	private String serverToClientSentence;
 	
+	/**
+	 * HashMap contenant les classes créer. La clef est le nom de la classe et la valeur est la classe créée.
+	 */
 	private HashMap<String, Class> tabClass;
 	
+	/**
+	 * HashMap contenant l'ensemble des objets créer. La clef est l'ID de l'objet et la valeur est l'objet en lui même
+	 */
 	private HashMap<String, Object> tabObject;
 	
-	
+	/**
+	 * Constructeur du serveur
+	 * @param port : port utilisé par le serveur
+	 * @throws Exception
+	 */
 	public ApplicationServer(int port) throws Exception
 	{
 		
@@ -44,8 +72,8 @@ public class ApplicationServer {
 	}
 	
 	/**
-	 * Traite une commande reçu par le serveur en appelant la méthode spécifiée
-	 * @param uneCommande : commande reçu par le serveur
+	 * Traite une commande reçue par le serveur en appelant la méthode spécifiée
+	 * @param uneCommande : commande reçue par le serveur
 	 * @throws IOException 
 	 */
 	
@@ -194,8 +222,7 @@ public class ApplicationServer {
 	
 	/**
 	 * Fonction qui compile une classe java
-	 * @param cheminFichierSource : chemin du fichier à compiler
-	 * @return un int qui permet de savoir si la compilation s'est bien déroulé
+	 * @param path : ArrayList contenant les chemins des fichiers sources à compiler
 	 * @throws IOException 
 	 */
 	
@@ -252,9 +279,9 @@ public class ApplicationServer {
 	}
 	
 	/**
-	 * Classe qui gère la création d'un objet
-	 * @param classeDeLobjet
-	 * @param identificateur
+	 * Classe qui gère la création d'un objet et qui l'enregistre dans une HashMap
+	 * @param classeDeLobjet : classe de l'objet à créer
+	 * @param identificateur : identificateur associé à cet objet
 	 * @throws IOException 
 	 */
 	
@@ -288,7 +315,7 @@ public class ApplicationServer {
 	/**
 	 * Permet d'écrire une valeur dans un champ donnée dans une classe donnée
 	 * @param pointeurObjet : objet que nous devons écrire
-	 * @param attribut : attribut à modifier de l'objet
+	 * @param attribut : attribut de l'objet à modifier 
 	 * @param valeur : valeur à écrire dans l'attribut
 	 * @throws IOException 
 	 */
@@ -379,7 +406,14 @@ public class ApplicationServer {
 	}
 	
 	
-	
+	/**
+	 * Appelle une méthode sur un objet spécifié
+	 * @param pointeurObjet : Objet sur lequel nous devons appeler une méthode
+	 * @param nomFonction : nom de la méthode à appeler
+	 * @param listeParametre : liste contenant les paramètres de la méthode
+	 * @param typeObj : Si la méthode appelée prend un objet préalablement créer, cette variable contient son type
+	 * @param valObj : Si la méthode appelée prend un objet préalablement créer, cette variable contient son ID
+	 */
 	public void traiterFonction(Object pointeurObjet, String nomFonction, ArrayList<Couple> listeParametre, String typeObj, String valObj) 
 	{
 
@@ -516,11 +550,10 @@ public class ApplicationServer {
 		
 	}
 	
-	
-	
-
-	
-	
+	/**
+	 * Méthode appelée pour renvoyer la confirmation d'exécution d'une commande au client
+	 * @throws IOException
+	 */
 	public void sendMessageToClient() throws IOException
 	
 	{
@@ -533,6 +566,11 @@ public class ApplicationServer {
 		}
 	}
 	
+	/**
+	 * Fonction principal permettant de lancer le serveur
+	 * @param argv
+	 * @throws Exception
+	 */
 	public static void main(String argv[]) throws Exception 
     { 
 		ApplicationServer server = new ApplicationServer(6789);

@@ -21,23 +21,41 @@ import com.sun.corba.se.spi.ior.Writeable;
 
 public class ApplicationClient {
 	
+	/**
+	 * String correspondant au nom de l'hôte du serveur
+	 */
 	private String hostName;
 	
+	
+	/**
+	 * Int correspondant au port utilisé par le serveur
+	 */
 	private int port;
 	
+	
+	/**
+	 * Socket utilisé pour la connexion
+	 */
 	private Socket clientSocket;
 	
-	private Commande commande;
-	
+	/**
+	 * Object renvoyé par le serveur lors de l'application d'un commande
+	 */
 	private Object retourFromServer;
 	
+	/**
+	 * PrintWriter utilisé pour écrire dans un fichier txt
+	 */
 	private PrintWriter write;
 	
+	/**
+	 * ArrayList contenant la liste des commandes à exécuter
+	 */
 	private static ArrayList<Commande> listCommande;
 	
 	
 	/*
-	* Constructeur 
+	* Constructeur de la classe ApplicaitonClient
 	*/
 	public ApplicationClient(String hostn, int pt) throws Exception
 	{
@@ -99,7 +117,7 @@ public class ApplicationClient {
 		String ligne;
 		while ((ligne=read.readLine())!=null)
 		{
-			commande = new Commande(ligne);
+			Commande commande = new Commande(ligne);
 			listCommande.add(commande);
 			
 		}

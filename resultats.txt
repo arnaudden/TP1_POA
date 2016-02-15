@@ -47,4 +47,4 @@ FROM SERVER: La fonction attributeNote a bien été exécutée
 Fonction: fonction, identificateur: mathilde, nom_fonction: getMoyenne,parametres :  a été envoyé
 FROM SERVER: La fonction getMoyenne renvoie 3.85
 Fonction: fonction, identificateur: 8inf853, nom_fonction: toString,parametres :  a été envoyé
-FROM SERVER: La fonction toString renvoie Cours(Titre: Architecture des applications <Raymond Sauve[2.85] = 3.0 , Mathilde Boivin[3.85] = 3.7 >)
+FROM SERVER: La fonction toString renvoie Cours(Titre: Architecture des applications <Mathilde Boivin[3.85] = 3.7 , Raymond Sauve[2.85] = 3.0 >)

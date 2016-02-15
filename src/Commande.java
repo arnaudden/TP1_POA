@@ -22,7 +22,7 @@ public class Commande implements Serializable {
 	
 
 	/**
-	* Fonction
+	* Champ appelé lors de la compilation d'un classe correspondant au chemln du fichier à compiler
 	*/
 	private String cheminRelatifDesFichiers;
 	
@@ -37,27 +37,27 @@ public class Commande implements Serializable {
 	private String nomQualifieDeClasse;
 	
 	/**
-	 * 
+	 * String contenant le nomm de la classe à créer lors de l'appel de la fonction : Création
 	 */
 	private String nomDeClasse;
 	
 	/*
-	* Creation & lecture & ecriture & fonction
+	* Identificateur de l'objet appelé par les fonctions, création, écriture, lecture et fonction
     */
 	private String identificateur;
 	
 	/*
-	* Lecture & ecriture 
+	* String correspondant à l'attribut d'un objet à lire ou écrire appelé par les fonctions écriture et lecture
 	*/
 	private String nomAttribut;	
 
 	/*
-	* ecriture
+	* String correspondant à la valeur de l'attribut. Appelé par la fonction écriture
 	*/
 	private String valeur;
 	
 	/*
-	* Fonction appelé par la commande fonction sur le serveur
+	* String correspondant au nom de la fonction appelée sur un objet créer sur le serveur
 	*/
 	private String nom_fonction;
 
@@ -67,17 +67,17 @@ public class Commande implements Serializable {
 	private ArrayList<Couple> liste_parametres;
 	
 	/*
-	* Fonction
+	* String correspondant au type d'un autre objet appelé par une fonction
 	*/
 	private String type;
 
 	/*
-	* Fonction
+	* String correspondant à l'identificateur d'un objet appelé par une fonction
 	*/
 	private String id_identificateur;
 	
 	/*
-	* Constructeur Vide
+	* Constructeur de la classe Commande
 	*/
 	public Commande(){
 		fonction = "aucune fonction";
