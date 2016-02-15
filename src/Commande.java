@@ -6,7 +6,6 @@ import java.util.Iterator;
 /**
  * Cette classe est utilisée pour emmagasiner la description d’une commande.
  * @author Anujan
- *
  */
 
 public class Commande implements Serializable {
@@ -22,7 +21,9 @@ public class Commande implements Serializable {
 	private String fonction;
 	
 
-	//Fonction
+	/**
+	* Fonction
+	*/
 	private String cheminRelatifDesFichiers;
 	
 	/**
@@ -40,48 +41,61 @@ public class Commande implements Serializable {
 	 */
 	private String nomDeClasse;
 	
-	// Creation & lecture & ecriture & fonction
+	/*
+	* Creation & lecture & ecriture & fonction
+    */
 	private String identificateur;
 	
-	//Lecture & ecriture 
+	/*
+	* Lecture & ecriture 
+	*/
 	private String nomAttribut;	
 
-	// ecriture
+	/*
+	* ecriture
+	*/
 	private String valeur;
 	
-	// Fonction appelé par la commande fonction sur le serveur
+	/*
+	* Fonction appelé par la commande fonction sur le serveur
+	*/
 	private String nom_fonction;
-	
-
-
 
 	/**
 	 * ArrayList correspondant aux paramètres appelés par une fonction
 	 */
 	private ArrayList<Couple> liste_parametres;
 	
-	//Fonction
+	/*
+	* Fonction
+	*/
 	private String type;
 
-	//Fonction
+	/*
+	* Fonction
+	*/
 	private String id_identificateur;
 	
+	/*
+	* Constructeur Vide
+	*/
 	public Commande(){
 		fonction = "aucune fonction";
 	}
 	
+	/*
+	* Constructeur qui prend une ligne et qui redonne la commande associé
+	*/
 	public Commande(String line){
 		
 		int indice = line.indexOf("#");
-		
 		fonction = line.substring(0, indice);
-		
-		//System.out.println(fonction);
 		
 		String tmp = new String();
 		String tmp1 = new String();
 		switch (fonction){
 		
+		// cas de la compilation
 		case "compilation": tmp = line.substring(indice +1);
 			indice = tmp.indexOf("#");
 			
@@ -104,21 +118,26 @@ public class Commande implements Serializable {
 			
 			break;
 		
+		// Cas du chargement
 		case "chargement": nomQualifieDeClasse = line.substring(indice+1); 
 			break;
 		
+		// Cas de la création
 		case "creation": tmp = line.substring(indice + 1);
 			indice = tmp.indexOf("#");
 			nomDeClasse = tmp.substring(0, indice);
 			identificateur = tmp.substring(indice +1);
 			break;
 		
+
+		// Cas de la lecture
 		case "lecture": tmp = line.substring(indice + 1);
 			indice = tmp.indexOf("#");
 			identificateur = tmp.substring(0, indice);
 			nomAttribut = tmp.substring(indice +1);
 			break;
 			
+		// Cas de l'écriture	
 		case "ecriture": tmp = line.substring(indice + 1);
 			indice = tmp.indexOf("#");		
 			identificateur = tmp.substring(0, indice);		
@@ -128,6 +147,8 @@ public class Commande implements Serializable {
 			valeur = tmp.substring(indice+1);
 			break;	
 		
+
+		// Cas de la fonction
 		case "fonction":
 			tmp = line.substring(indice + 1);
 			indice = tmp.indexOf("#");
@@ -178,7 +199,9 @@ public class Commande implements Serializable {
 	}
 	
 
-
+	/*
+	* Fonction toString Utiliser pour afficher une "commande" 
+	*/
 	public String toString(){
 		
 		String result = new String();
@@ -221,22 +244,7 @@ public class Commande implements Serializable {
 				default: System.out.println("Fonction Inconnue");
 				}
 		return result;
-	}
-
-	public static void main(String argv[]) throws Exception 
-    { 
-		String txt = "fonction#mathilde#getMoyenne#";
-		Commande cmd = new Commande(txt);
-		System.out.println(cmd.toString());
-		txt = "fonction#8inf843#attributeNote#ca.uqac.registraire.Etudiant:ID(raymond),float:2.7";
-		cmd = new Commande(txt);
-		System.out.println(cmd.toString());	
-		System.out.println(cmd.getListe_parametres().get(0).getValeur());
-		
-		
-		
-    }
-	
+	}	
 	
 	/**
 	 * Retourne la fonction de la commande à exécuter sur le serveur
@@ -290,7 +298,7 @@ public class Commande implements Serializable {
 	}
 
 	/**
-	 * 
+	 * Retourne la valeur de la classe à créer
 	 * @return
 	 */
 	
@@ -298,19 +306,34 @@ public class Commande implements Serializable {
 		return valeur;
 	}
 	
-	
+	/**
+	 * Retourne la liste des paramètres
+	 * @return
+	 */
 	public ArrayList<Couple> getListe_parametres() {
 		return liste_parametres;
 	}
 	
+	/**
+	 * Retourne le nom de la fonction de la classe
+	 * @return
+	 */
 	public String getNom_fonction() {
 		return nom_fonction;
 	}
 	
+	/**
+	 * Retourne le type de la classe
+	 * @return
+	 */
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * Retourne l'id identificateur pour utiliser pour une autre fonction
+	 * @return
+	 */
 	public String getId_identificateur() {
 		return id_identificateur;
 	}

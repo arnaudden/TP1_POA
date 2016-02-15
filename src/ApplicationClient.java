@@ -36,7 +36,9 @@ public class ApplicationClient {
 	private static ArrayList<Commande> listCommande;
 	
 	
-	
+	/*
+	* Constructeur 
+	*/
 	public ApplicationClient(String hostn, int pt) throws Exception
 	{
 		listCommande=new ArrayList<Commande>();
@@ -44,6 +46,14 @@ public class ApplicationClient {
 		port = pt;
 	}
 	
+	/**
+	* prend une Commande dûment formatée, et la fait exécuter par le serveur. Le résultat de
+	* l’exécution est retournée. Si la commande ne retourne pas de résultat, on retourne null.
+	* Chaque appel doit ouvrir une connexion, exécuter, et fermer la connexion. Si vous le
+	* souhaitez, vous pourriez écrire six fonctions spécialisées, une par type de commande
+	* décrit plus haut, qui seront appelées par traiteCommande(Commande uneCommande)
+	* @return
+	*/
 	public Object traiteCommande(Commande uneCommande) throws IOException 
 	{
 		
@@ -76,7 +86,7 @@ public class ApplicationClient {
 	
 	/**
 	* initialise : ouvre les différents fichiers de lecture et écriture
-	 * @throws IOException 
+	* @throws IOException 
 	*/
 	
 
@@ -101,6 +111,9 @@ public class ApplicationClient {
 		write = new PrintWriter(buffWriter);
 	}
 	
+	/**
+	* Permet de fermer le fichier d'écriture
+	*/
 	public void closeFile()
 	{
 		write.close();
